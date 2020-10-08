@@ -3,7 +3,13 @@ const ejsLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
+const passport = require('passport');
 const app = express();
+
+/* **************************PASSPORT CONFIG************************* */
+require('./config/passport')(passport);
+/* **************************************************************************** */
+
 
 /* **************************DB CONFIG AND CONNECTION************************* */
 const db = require('./config/keys').MongoURI;
@@ -33,6 +39,11 @@ app.use(session({
 }));
 /* **************************************************************************** */
 
+/* **************************PASSPORT MIDDLEWARE******************************* */
+app.use(passport.initialize());
+app.use(passport.session());
+/* **************************************************************************** */
+
 /* **************************CONNECT FLASH************************************* */
 app.use(flash());
 /* **************************************************************************** */
@@ -41,6 +52,7 @@ app.use(flash());
 app.use((req,res,next)=>{
     res.locals.success_message = req.flash('success_message');
     res.locals.error_message = req.flash('error_message');
+    res.locals.error = req.flash('error');
     next();
 });
 /* **************************************************************************** */
